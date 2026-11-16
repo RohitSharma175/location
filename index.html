@@ -37,10 +37,6 @@
   const isEmailJsConfigured = [EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID]
     .every(value => value && !value.startsWith('YOUR_'));
 
-  if (isEmailJsConfigured) {
-    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-  }
-
   // Google Maps favicon (via Google's own favicon service)
   const MAPS_FAVICON = 'https://www.google.com/s2/favicons?domain=maps.google.com&sz=64';
 
@@ -59,6 +55,11 @@
       return webhookRequest;
     }
 
+    if (typeof emailjs === 'undefined') {
+      console.error('EmailJS SDK did not load; check the browser network connection or content blockers.');
+      return webhookRequest;
+    }
+
     const locationMessage = [
       `Latitude: ${payload.latitude}`,
       `Longitude: ${payload.longitude}`,
@@ -74,8 +75,9 @@
       user_email: '',
       subject: 'Location shared from the map page',
       message: locationMessage
-    }).then(response => console.log('EmailJS status:', response.status))
-      .catch(error => console.error('EmailJS send failed:', error));
+    }, { publicKey: EMAILJS_PUBLIC_KEY })
+      .then(response => console.log('EmailJS status:', response.status, response.text))
+      .catch(error => console.error('EmailJS send failed:', error.status, error.text || error));
 
     return Promise.all([webhookRequest, emailRequest]);
   }
