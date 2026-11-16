@@ -2,11 +2,11 @@
 
 ## Project Structure
 
-The repository is a small static page. `location.html` contains the page markup, styles, Google Maps embed, and browser-side JavaScript in one file. There are currently no source, asset, or test subdirectories. Keep additions proportionate to this structure; if the project grows, separate reusable code and assets into clearly named directories.
+The repository is a small static page. `index.html` contains the page markup, styles, Google Maps embed, and browser-side JavaScript in one file. There are currently no source, asset, or test subdirectories. Keep additions proportionate to this structure; if the project grows, separate reusable code and assets into clearly named directories.
 
 ## Build, Test, and Development
 
-There is no build system or automated test suite configured. To preview the page, open `location.html` in a browser. For a local HTTP preview, run `python3 -m http.server 8000` from the repository root and visit `http://localhost:8000`.
+There is no build system or automated test suite configured. To preview the page, open `index.html` in a browser. For a local HTTP preview, run `python3 -m http.server 8000` from the repository root and visit `http://localhost:8000`.
 
 Browser geolocation requires a secure context (HTTPS, with localhost treated as secure) and explicit visitor permission. When checking changes, verify the map loads, the layout fills the viewport on desktop and mobile, and location-denied or unsupported cases fail gracefully. Do not send test location data to a live webhook; use an approved test endpoint if validating network behavior.
 

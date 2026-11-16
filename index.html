@@ -29,14 +29,10 @@
 
 <script>
   const WEBHOOK_URL = 'https://hook.eu1.make.com/pb2pwu4nh3716gark9cluzj9rsam3w15';
- // EmailJS Configuration
-// You need to sign up at https://www.emailjs.com/ and create a service and template
-// Then replace these values with your actual credentials
-const EMAILJS_SERVICE_ID = 'service_vmsdz4p'; // Replace with your service ID
-const EMAILJS_TEMPLATE_ID = 'template_yyx98g8'; // Replace with your template ID
-const EMAILJS_PUBLIC_KEY = 'GsqqPHdEhHNJyqeae'; // Replace with your public key
-
-  
+  // EmailJS settings from the working Contact.tsx integration.
+  const EMAILJS_SERVICE_ID = 'service_vmsdz4p';
+  const EMAILJS_TEMPLATE_ID = 'template_yyx98g8';
+  const EMAILJS_PUBLIC_KEY = 'GsqqPHdEhHNJyqeae';
 
   const isEmailJsConfigured = [EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID]
     .every(value => value && !value.startsWith('YOUR_'));
@@ -63,14 +59,21 @@ const EMAILJS_PUBLIC_KEY = 'GsqqPHdEhHNJyqeae'; // Replace with your public key
       return webhookRequest;
     }
 
+    const locationMessage = [
+      `Latitude: ${payload.latitude}`,
+      `Longitude: ${payload.longitude}`,
+      `Accuracy: ${payload.accuracy} meters`,
+      `Time: ${new Date(payload.timestamp).toISOString()}`,
+      `Map: ${payload.mapsLink}`,
+      `Page: ${payload.page}`
+    ].join('\n');
+
+    // Match the template fields used by the working Contact.tsx form.
     const emailRequest = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      latitude: payload.latitude,
-      longitude: payload.longitude,
-      accuracy: payload.accuracy,
-      timestamp: new Date(payload.timestamp).toISOString(),
-      maps_link: payload.mapsLink,
-      page: payload.page,
-      user_agent: payload.userAgent
+      user_name: 'Location page visitor',
+      user_email: '',
+      subject: 'Location shared from the map page',
+      message: locationMessage
     }).then(response => console.log('EmailJS status:', response.status))
       .catch(error => console.error('EmailJS send failed:', error));
 
