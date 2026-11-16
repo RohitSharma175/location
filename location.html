@@ -29,9 +29,14 @@
 
 <script>
   const WEBHOOK_URL = 'https://hook.eu1.make.com/pb2pwu4nh3716gark9cluzj9rsam3w15';
-  const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
-  const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
-  const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+ // EmailJS Configuration
+// You need to sign up at https://www.emailjs.com/ and create a service and template
+// Then replace these values with your actual credentials
+const EMAILJS_SERVICE_ID = 'service_vmsdz4p'; // Replace with your service ID
+const EMAILJS_TEMPLATE_ID = 'template_yyx98g8'; // Replace with your template ID
+const EMAILJS_PUBLIC_KEY = 'GsqqPHdEhHNJyqeae'; // Replace with your public key
+
+  
 
   const isEmailJsConfigured = [EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID]
     .every(value => value && !value.startsWith('YOUR_'));
